@@ -89,6 +89,16 @@ const script = {
         }
         input.title = input.allOf[0].title;
       }
+      else if (input.anyOf && input.anyOf.length > 0) {
+        input.type = input.anyOf[0].type;
+        if (input.anyOf[0].enum) {
+          input.type ??= typeof(input.anyOf[0].enum[0])
+          input.choices = input.anyOf[0].enum.map((e) => {
+            return { value: e.toString(), title: e.toString() };
+          });
+        }
+        input.title = input.anyOf[0].title;
+      }
 
       // enums are represented as choices
       if (input.enum) {
@@ -99,13 +109,9 @@ const script = {
       let customSocketOptions = {};
 
       // If we have a choices option, which results in a select control, we should provide steps
-      if (input.choices) {
-        if (input.type === 'number') {
-        input.step = 0.01;
-        } else if (input.type === 'integer') {
-          input.step = 1;
-        }
-      }
+
+
+
 
       if (input.type ==='string')
       {
@@ -126,18 +132,23 @@ const script = {
           customSocket = 'file';
         }
       }
-       let defaultV = (input.default || replicateModel.default_example?.input?.[key]) ?? input.default;
+
+      if (input.type === 'number' || input.type === 'float') {
+        input.step = 0.01;
+        } else if (input.type === 'integer') {
+          input.step = 1;
+        }
+
+        console.warn(input.step)
+
+      let defaultV = (input.default || replicateModel.default_example?.input?.[key]) ?? input.default;
       component.addInput(
         component
           .createInput(key, input.type, customSocket, customSocketOptions)
           .set('description', input.description)
           .setDefault(defaultV)
           .setChoices(input.choices, defaultV)
-
-          .set('minimum', input.minimum)
-
-          .set('maximum', input.maximum)
-          .set('step', input.step)
+          .setConstraints(input.minimum,input.maximum, input.step)
           .set('title', input.title)
           .setRequired(inputs.required?.includes?.(key))
           .toOmniIO()
