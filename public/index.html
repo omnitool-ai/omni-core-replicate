@@ -3,22 +3,24 @@
   <head>
     <style>
       html, body { margin: 0;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+        min-width: 600px;
         overflow: hidden;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding:4px 4px 4px 4px;
+        background-color: #9ca3af;
       }
       #app
       {
-        background-color: #9ca3af;
+        background-color: white;
         background-size:cover;
-        width: 100vw;
-        height: 100vh;
+
       }
-      .flipbook {
-        backdrop-filter: blur(45px);
-        width: 100vw;
-        height: 100vh;
+      .content {
+        padding: 3px 3px 3px 3px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
     </style>
   </head>
@@ -28,20 +30,23 @@
         <img src="./logo.png" />
         <h3>Replicate Model Import</h3>
       </div>
-      <div>
+      <div class="content">
       <p>
         This extension allows any AI model found on <a href='https://replicate.com/explore'>replicate.com</a>.
       </p>
-      <label><b>Model:</b></label>
+      <label><b>Model</b></label>
       <div>
-      <input type="text" id="modelName" placeholder="stability-ai/sdxl"> </input>
+      <input type="text" style="width:300px;" id="modelName" placeholder="e.g. stability-ai/sdxl"> </input>
       </div>
-      <div><small>Please enter Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small>.</div>
+      <div><small>Please enter Replicate model URL (e.g. https://replicate.com/stability-ai/sdxl) or a valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
       </div>
-      <button type="button" onclick="addButton()">Add To Omnitool</button>
-      <div id="result">
+      <button type="button" onclick="addButton()">Add Model To Omnitool</button>
+      <p></p>
+      <div><small>After adding the model it can be found in the block manager.</small></div>
 
-      </div>
+      <textarea id="result" style="height: 400px; width: 95%; overflow-y: scroll;">
+
+      </textarea>
 
 
     </div>
@@ -61,8 +66,8 @@
           }
         );
         const data = await response.json();
-        let resultDiv = document.getElementById("result");
-        resultDiv.innerHTML = `<pre> ${result} </pre>`;
+        let resultArea = document.getElementById("result");
+        resultArea.value = `${JSON.stringify(data, null, 2)}`;
 
         return data
       }
@@ -70,7 +75,26 @@
       const addButton = async function()
       {
         const modelName = document.getElementById("modelName").value;
-        runExtensionScript('replicate', [modelName])
+
+        let name = modelName.trim();
+
+        name = name.replace('https://replicate.com/', '')
+
+
+        if (name.length == 0)
+        {
+          alert("Please enter a valid model name in the format: owner/modelName");
+          return;
+        }
+
+        if (name.indexOf('/') < 1)
+        {
+          alert("Please enter a valid model name in the format: owner/modelName");
+          return;
+        }
+
+        runExtensionScript('replicate', [name])
+        document.getElementById("modelName").value = ''
 
       }
 

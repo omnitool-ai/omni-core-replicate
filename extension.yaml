@@ -5,6 +5,7 @@ author: Georg Zoeller
 origin: https://github.com/georgzoeller/omni-extension-replicate
 client:
   addToWorkbench: true
+  singleton: true
   winbox:
     minwidth: 600
     minheight: 500

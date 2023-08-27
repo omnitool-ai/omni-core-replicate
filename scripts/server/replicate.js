@@ -2,7 +2,6 @@ const script = {
   name: 'blockManager',
 
   exec: async function (ctx, payload) {
-    console.log('blocks', payload);
     const sessionId = ctx.sessionId;
     if (payload.length < 1) {
       await ctx.app.sendErrorToSession(
@@ -140,7 +139,7 @@ const script = {
           .set('maximum', input.maximum)
           .set('step', input.step)
           .set('title', input.title)
-          .setRequired(inputs.required?.indexOf?.(key) != -1)
+          .setRequired(inputs.required?.includes?.(key))
           .toOmniIO()
       );
     }
@@ -158,8 +157,13 @@ const script = {
       if (output.items.type === 'string') {
         output.type = 'string';
         output.customSocket = 'text';
-      } else {
-        output.type = output.items?.type;
+      } else  if (output.items.anyOf)
+      {
+        output.type = output.items.anyOf[0].type;
+      }
+      else
+      {
+        output.type = output.items?.type
       }
 
       if (output['x-cog-array-display'] === 'concatenate') {
@@ -179,6 +183,17 @@ const script = {
         output.title = 'File';
         output.customSocket = 'file';
       }
+    }
+
+    if (!output.type)
+    {
+      output.type = 'object'
+      console.warn("Unknown output type", output)
+
+    }
+    else
+    {
+      console.warn(output.type)
     }
 
     component.addOutput(
