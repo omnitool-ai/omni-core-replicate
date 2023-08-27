@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html, body { margin: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      #app
+      {
+        background-color: #9ca3af;
+        background-size:cover;
+        width: 100vw;
+        height: 100vh;
+      }
+      .flipbook {
+        backdrop-filter: blur(45px);
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div style="display:flex;">
+        <img src="./logo.png" />
+        <h3>Replicate Model Import</h3>
+      </div>
+      <div>
+      <p>
+        This extension allows any AI model found on <a href='https://replicate.com/explore'>replicate.com</a>.
+      </p>
+      <label><b>Model:</b></label>
+      <div>
+      <input type="text" id="modelName" placeholder="stability-ai/sdxl"> </input>
+      </div>
+      <div><small>Please enter Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small>.</div>
+      </div>
+      <button type="button" onclick="addButton()">Add To Omnitool</button>
+      <div id="result">
+
+      </div>
+
+
+    </div>
+    <script>
+
+
+
+      const runExtensionScript = async (scriptName, payload) => {
+
+        const response = await fetch('/api/v1/mercenaries/runscript/omni-extension-replicate:' + scriptName,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }
+        );
+        const data = await response.json();
+        let resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = `<pre> ${result} </pre>`;
+
+        return data
+      }
+
+      const addButton = async function()
+      {
+        const modelName = document.getElementById("modelName").value;
+        runExtensionScript('replicate', [modelName])
+
+      }
+
+      /*const args = new URLSearchParams(location.search)
+      const params = JSON.parse(args.get('q'))*/
+
+
+    </script>
+  </body>
+</html>
