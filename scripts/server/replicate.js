@@ -128,30 +128,34 @@ const script = {
           customSocket = 'image';
         } else {
           input.type = 'object';
-          input.title = 'File';
           customSocket = 'file';
         }
       }
 
+      if (input.minimum != null || input.maximum != null) {
       if (input.type === 'number' || input.type === 'float') {
         input.step = 0.01;
         } else if (input.type === 'integer') {
           input.step = 1;
         }
-
-        console.warn(input.step)
+      }
 
       let defaultV = (input.default || replicateModel.default_example?.input?.[key]) ?? input.default;
-      component.addInput(
-        component
-          .createInput(key, input.type, customSocket, customSocketOptions)
-          .set('description', input.description)
-          .setDefault(defaultV)
-          .setChoices(input.choices, defaultV)
-          .setConstraints(input.minimum,input.maximum, input.step)
-          .set('title', input.title)
-          .setRequired(inputs.required?.includes?.(key))
-          .toOmniIO()
+
+      const ip = component
+      .createInput(key, input.type, customSocket, customSocketOptions)
+      .set('description', input.description)
+      .setDefault(defaultV)
+      .setConstraints(input.minimum,input.maximum, input.step)
+      .set('title', input.title)
+      .setRequired(inputs.required?.includes?.(key))
+
+      if (input.choices?.length) {
+        ip.setChoices(input.choices, defaultV)
+      }
+
+      component.addInput( ip.toOmniIO()
+
       );
     }
 
@@ -191,7 +195,7 @@ const script = {
         output.customSocket = 'image';
       } else {
         output.type = 'array';
-        output.title = 'File';
+        //output.title = 'File';
         output.customSocket = 'file';
       }
     }
