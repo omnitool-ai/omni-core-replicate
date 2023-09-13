@@ -123,7 +123,9 @@ const script = {
         if (
           input.description?.includes('image') ||
           key === 'image' ||
-          input.title === 'Image'
+          input.title === 'Image' ||
+          key === 'mask' ||
+          input.title === "Mask"
         ) {
           customSocket = 'image';
         } else {
@@ -140,7 +142,7 @@ const script = {
         }
       }
 
-      let defaultV = (input.default || replicateModel.default_example?.input?.[key]) ?? input.default;
+      let defaultV = (replicateModel.default_example?.input?.[key] || input.default) ?? input.default;
 
       const ip = component
       .createInput(key, input.type, customSocket, customSocketOptions)
@@ -190,7 +192,7 @@ const script = {
 
     if (output.format === 'uri') {
       customSocketOptions.array = true;
-      if (output.description?.includes('image') || output.title === 'Image') {
+      if (output.description?.includes('image') || output.title === 'Image' || output.title === 'Mask') {
         output.type = 'array';
         output.customSocket = 'image';
       } else {
