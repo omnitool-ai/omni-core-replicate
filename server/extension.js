@@ -34,6 +34,10 @@ const extensionHooks = {
 let macros = {
 
 "omni-extension-replicate:replicate_exec": async (payload, ctx, component) => {
+  if (payload.enabled === false)
+  {
+    return {}
+  }
   for (let key in payload) {
     if (payload[key] === '' || payload[key] === undefined) {
       delete payload[key];
@@ -59,6 +63,7 @@ let macros = {
     { user: ctx.userId }
   );
   }
+
 }
 
 const createComponents =  () => ({

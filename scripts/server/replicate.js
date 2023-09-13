@@ -159,8 +159,14 @@ const script = {
       component.addInput( ip.toOmniIO()
 
       );
-    }
 
+      const enabledInput = component
+      .createInput("enabled", "boolean")
+      .set('title', "Enabled")
+      .set('description', "Programmatically toggle this component")
+      .setDefault(true)
+      component.addInput( enabledInput.toOmniIO())
+    }
 
     let customSocketOptions = {
       customSettings: {},
