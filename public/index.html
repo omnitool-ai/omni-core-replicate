@@ -38,8 +38,9 @@
 
       <div><small>Please select a collection to install:</small></div>
       <ul>
-      <li><button type="button" onclick="addFavButton('SDXL')">Stable Diffusion XL Collection</button></li>
-      <li><button type="button" onclick="addFavButton('images')">Image Utilities Collection</button></li>
+      <li><button type="button" onclick="addFavButton('images')">Image Utilities Collection</button>- <small>Image Generation Essentials</small></li>
+      <li><button type="button" onclick="addFavButton('SD15')">Stable Diffusion 1.5 Collection</button> - <small>Image Generation and Controlnet</small></li>
+      <li><button type="button" onclick="addFavButton('SDXL')">Stable Diffusion XL Collection</button> - <small>Image Generation and Finetunes</small></li>
 
       </ul>
       <p><small>or</small></p>
@@ -98,9 +99,14 @@
         {
           runExtensionScript('replicate', ['stability-ai/sdxl', 'fofr/sdxl-emoji', 'fofr/sdxl-barbie', 'pwntus/sdxl-gta-v', 'jakedahn/sdxl-70s-scifi', 'davidbarker/sdxl-polaroid', 'cbh123/sdxl-money'])
         }
+        else if (type === 'SD15')
+        {
+          runExtensionScript('replicate', ['stability-ai/stable-diffusion', 'arielreplicate/paella_fast_outpainting', 'cjwbw/stable-diffusion-high-resolution', 'andreasjansson/stable-diffusion-inpainting', 'rossjillian/controlnet', 'logerzhu/ad-inpaint', 'andreasjansson/qrcode'])
+
+        }
         else if (type === 'images')
         {
-          runExtensionScript('replicate', ['cjwbw/rembg', 'sczhou/codeformer', 'lucataco/faceswap', 'nightmareai/real-esrgan', 'jingyunliang/swinir', 'mv-lab/swin2sr', 'nightmareai/latent-sr', 'tencentarc/gfpgan', 'microsoft/bringing-old-photos-back-to-life'])
+          runExtensionScript('replicate', ['cjwbw/rembg', 'andreasjansson/deepfloyd-if', 'hassamdevsy/mask2former', 'stphtan94117/auto-remove-anything', 'stphtan94117/auto-blurring-of-faces-and-license_plates', 'tencentarc/gfpgan', 'sczhou/codeformer', 'arielreplicate/deoldify_image', 'lucataco/faceswap', 'nightmareai/real-esrgan', 'jingyunliang/swinir', 'mv-lab/swin2sr', 'nightmareai/latent-sr', 'tencentarc/gfpgan', 'microsoft/bringing-old-photos-back-to-life'])
         }
       }
 
