@@ -253,7 +253,10 @@ const script = {
         ],
       }
     );
-    return result;
+    return {
+      replicateResult: result,
+      block: b
+    }
   },
 };
 export default script;

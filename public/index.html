@@ -35,11 +35,21 @@
         This extension allows any AI model found on <a href='https://replicate.com/explore'>replicate.com</a>.
       </p>
       <label><b>Model</b></label>
+
+      <div><small>Please select a collection to install:</small></div>
+      <ul>
+      <li><button type="button" onclick="addFavButton('SDXL')">Stable Diffusion XL Collection</button></li>
+      <li><button type="button" onclick="addFavButton('images')">Image Utilities Collection</button></li>
+
+      </ul>
+      <p><small>or</small></p>
+      <div><small>Enter Replicate model URL (e.g. https://replicate.com/stability-ai/sdxl) or a valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
+      </div>
+
       <div>
-      <input type="text" style="width:300px;" id="modelName" placeholder="e.g. stability-ai/sdxl"> </input>
-      </div>
-      <div><small>Please enter Replicate model URL (e.g. https://replicate.com/stability-ai/sdxl) or a valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
-      </div>
+        <input type="text" style="width:300px;" id="modelName" placeholder="e.g. stability-ai/sdxl"> </input>
+        </div>
+
       <button type="button" onclick="addButton()">Add Model To Omnitool</button>
       <p></p>
       <div><small>After adding the model it can be found in the block manager.</small></div>
@@ -56,21 +66,44 @@
 
       const runExtensionScript = async (scriptName, payload) => {
 
-        const response = await fetch('/api/v1/mercenaries/runscript/omni-extension-replicate:' + scriptName,
+
+        await Promise.all(payload.forEach(async (p) => {
+          const response = await fetch('/api/v1/mercenaries/runscript/omni-extension-replicate:' + scriptName,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify([p])
           }
         );
         const data = await response.json();
+
+        const replicateResult = data.replicateResult
+        const block = data.block
+
         let resultArea = document.getElementById("result");
-        resultArea.value = `${JSON.stringify(data, null, 2)}`;
+        resultArea.value = `${JSON.stringify(replicateResult, null, 2)}`;
+
+        }));
 
         return data
       }
+
+
+      const addFavButton = async function(type)
+      {
+
+        if (type === 'SDXL')
+        {
+          runExtensionScript('replicate', ['stability-ai/sdxl', 'fofr/sdxl-emoji', 'fofr/sdxl-barbie', 'pwntus/sdxl-gta-v', 'jakedahn/sdxl-70s-scifi', 'davidbarker/sdxl-polaroid', 'cbh123/sdxl-money'])
+        }
+        else if (type === 'images')
+        {
+          runExtensionScript('replicate', ['cjwbw/rembg', 'nightmareai/real-esrgan', 'jingyunliang/swinir', 'mv-lab/swin2sr', 'nightmareai/latent-sr', 'tencentarc/gfpgan', 'microsoft/bringing-old-photos-back-to-life'])
+        }
+      }
+
 
       const addButton = async function()
       {
