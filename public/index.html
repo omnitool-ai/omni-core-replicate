@@ -97,19 +97,61 @@
 
         if (type === 'SDXL')
         {
-          runExtensionScript('replicate', ['stability-ai/sdxl', 'fofr/sdxl-emoji', 'fofr/sdxl-barbie', 'pwntus/sdxl-gta-v', 'jakedahn/sdxl-70s-scifi', 'davidbarker/sdxl-polaroid', 'cbh123/sdxl-money'])
+          runExtensionScript('replicate', `
+            cbh123/sdxl-money,
+            davidbarker/sdxl-polaroid,
+            doriandarko/sdxl-hiroshinagai,
+            fofr/sdxl-emoji,
+            fofr/sdxl-barbie,
+            fofr/sdxl-tron,
+            jakedahn/sdxl-70s-scifi,
+            lucataco/sdxl-clip-interrogator,
+            lucataco/sdxl-panoramic,
+            nandycc/sdxl-app-icons,
+            pwntus/sdxl-gta-v,
+            stability-ai/sdxl,
+            `.split(',').map(s => s.trim()).filter(Boolean))
         }
         else if (type === 'SD15')
         {
-          runExtensionScript('replicate', ['stability-ai/stable-diffusion', 'arielreplicate/paella_fast_outpainting', 'cjwbw/stable-diffusion-high-resolution', 'andreasjansson/stable-diffusion-inpainting', 'rossjillian/controlnet', 'logerzhu/ad-inpaint', 'andreasjansson/qrcode'])
-
+          runExtensionScript('replicate', `
+            22-hours/vintedois-diffusion,
+            andreasjansson/illusion,
+            andreasjansson/qrcode,
+            andreasjansson/stable-diffusion-inpainting,
+            arielreplicate/paella_fast_outpainting,
+            cjwbw/analog-diffusion,
+            cjwbw/stable-diffusion-high-resolution,
+            cjwbw/vq-diffusion,
+            cjwbw/magifactory-t-shirt-diffusion,
+            logerzhu/ad-inpaint,
+            rossjillian/controlnet,
+            stability-ai/stable-diffusion,
+            tommoore515/material_stable_diffusion,
+            tstramer/archer-diffusion,
+          `.split(',').map(s => s.trim()).filter(Boolean))
         }
         else if (type === 'images')
         {
-          runExtensionScript('replicate', ['cjwbw/rembg', 'andreasjansson/deepfloyd-if', 'hassamdevsy/mask2former', 'stphtan94117/auto-remove-anything', 'stphtan94117/auto-blurring-of-faces-and-license_plates', 'tencentarc/gfpgan', 'sczhou/codeformer', 'arielreplicate/deoldify_image', 'lucataco/faceswap', 'nightmareai/real-esrgan', 'jingyunliang/swinir', 'mv-lab/swin2sr', 'nightmareai/latent-sr', 'tencentarc/gfpgan', 'microsoft/bringing-old-photos-back-to-life'])
+          runExtensionScript('replicate', `
+            andreasjansson/deepfloyd-if,
+            arielreplicate/deoldify_image,
+            cjwbw/rembg,
+            hassamdevsy/mask2former,
+            jingyunliang/swinir,
+            lucataco/faceswap,
+            microsoft/bringing-old-photos-back-to-life,
+            mv-lab/swin2sr,
+            nightmareai/real-esrgan,
+            nightmareai/latent-sr,
+            rmokady/clip_prefix_caption,
+            sczhou/codeformer,
+            stphtan94117/auto-remove-anything,
+            stphtan94117/auto-blurring-of-faces-and-license_plates,
+            tencentarc/gfpgan,
+          `.split(',').map(s => s.trim()).filter(Boolean))
         }
       }
-
 
       const addButton = async function()
       {
