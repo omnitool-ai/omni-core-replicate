@@ -32,19 +32,18 @@
       </div>
       <div class="content">
       <p>
-        This extension allows any AI model found on <a href='https://replicate.com/explore'>replicate.com</a>.
+        This extension allows any AI model found on <a href='https://replicate.com/explore'>replicate.com</a> to be used as a block within Omnitool.
       </p>
-      <label><b>Model</b></label>
 
-      <div><small>Please select a collection to install:</small></div>
+      <div><small>Choose a model collection to install:</small></div>
       <ul>
-      <li><button type="button" onclick="addFavButton('images')">Image Utilities Collection</button>- <small>Image Generation Essentials</small></li>
+      <li><button type="button" onclick="addFavButton('images')">Image Utilities Collection</button> - <small>Image Generation Essentials</small></li>
       <li><button type="button" onclick="addFavButton('SD15')">Stable Diffusion 1.5 Collection</button> - <small>Image Generation and Controlnet</small></li>
       <li><button type="button" onclick="addFavButton('SDXL')">Stable Diffusion XL Collection</button> - <small>Image Generation and Finetunes</small></li>
+      <li><button type="button" onclick="addFavButton('LLM')">Large Language Model (LLM) Collection</button> - <small>Text Generation</small></li>
 
       </ul>
-      <p><small>or</small></p>
-      <div><small>Enter Replicate model URL (e.g. https://replicate.com/stability-ai/sdxl) or a valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
+      <div><small>Or install a single Replicate model. Use the URL (e.g. https://replicate.com/stability-ai/sdxl) or a valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
       </div>
 
       <div>
@@ -53,7 +52,7 @@
 
       <button type="button" onclick="addButton()">Add Model To Omnitool</button>
       <p></p>
-      <div><small>After adding the model it can be found in the block manager.</small></div>
+      <div><small>After adding models, they can be found in the block manager.</small></div>
 
       <textarea id="result" style="height: 400px; width: 95%; overflow-y: scroll;">
 
@@ -149,6 +148,14 @@
             stphtan94117/auto-remove-anything,
             stphtan94117/auto-blurring-of-faces-and-license_plates,
             tencentarc/gfpgan,
+          `.split(',').map(s => s.trim()).filter(Boolean))
+        }
+        else if (type === 'LLM')
+        {
+          runExtensionScript('replicate', `
+            meta/llama-2-7b-chat,
+            meta/llama-2-13b-chat,
+            meta/llama-2-70b-chat,
           `.split(',').map(s => s.trim()).filter(Boolean))
         }
       }
