@@ -137,6 +137,7 @@
             arielreplicate/deoldify_image,
             cjwbw/rembg,
             hassamdevsy/mask2former,
+            huage001/adaattn,
             jingyunliang/swinir,
             lucataco/faceswap,
             microsoft/bringing-old-photos-back-to-life,
@@ -153,9 +154,11 @@
         else if (type === 'LLM')
         {
           runExtensionScript('replicate', `
+            lucataco/mpt-30b-chat,
             meta/llama-2-7b-chat,
             meta/llama-2-13b-chat,
             meta/llama-2-70b-chat,
+            replicate/vicuna-13b,
           `.split(',').map(s => s.trim()).filter(Boolean))
         }
       }
