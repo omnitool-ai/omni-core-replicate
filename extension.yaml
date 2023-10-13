@@ -8,7 +8,7 @@ client:
   singleton: true
   winbox:
     width: 800
-    height: 600
+    height: 900
     minwidth: 800
     minheight: 600
 
