@@ -1,74 +1,189 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      html, body { margin: 0;
-        width: 100%;
-        height: 100%;
-        min-height: 500px;
-        min-width: 600px;
-        overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding:4px 4px 4px 4px;
-        background-color: #9ca3af;
-      }
-      #app
-      {
-        background-color: white;
-        background-size:cover;
 
-      }
-      .content {
-        padding: 3px 3px 3px 3px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <div style="display:flex;">
-        <img src="./logo.png" />
-        <h3>Replicate Model Import</h3>
-      </div>
-      <div class="content">
-      <p>
-        This extension allows any AI model found on <a href='https://replicate.com/explore'>replicate.com</a> to be used as a block within Omnitool.
-      </p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html,
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      background-color: #9ca3af;
+      color: #2e3440;
+    }
 
-      <div><small>Choose a model collection to install:</small></div>
-      <ul>
-      <li><button type="button" onclick="addFavButton('images')">Image Utilities Collection</button> - <small>Image Generation Essentials</small></li>
-      <li><button type="button" onclick="addFavButton('SD15')">Stable Diffusion 1.5 Collection</button> - <small>Image Generation and Controlnet</small></li>
-      <li><button type="button" onclick="addFavButton('SDXL')">Stable Diffusion XL Collection</button> - <small>Image Generation and Finetunes</small></li>
-      <li><button type="button" onclick="addFavButton('LLM')">Large Language Model (LLM) Collection</button> - <small>Text Generation</small></li>
+    #app {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 1000px;
+      margin: auto;
+    }
 
-      </ul>
-      <div><small>Or install a single Replicate model. Use the URL (e.g. https://replicate.com/stability-ai/sdxl) or a valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
-      </div>
+    #app img {
+      height: 40px;
+      align-self: center;
+    }
 
-      <div>
-        <input type="text" style="width:300px;" id="modelName" placeholder="e.g. stability-ai/sdxl"> </input>
-        </div>
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-      <button type="button" onclick="addButton()">Add Model To Omnitool</button>
-      <p></p>
-      <div><small>After adding models, they can be found in the block manager.</small></div>
+    .content p {
+      margin-bottom: 20px;
+    }
 
-      <textarea id="result" style="height: 400px; width: 95%; overflow-y: scroll;">
+    button {
+      display: flex;
+      align-items: center;
+      background-color: black;
+      color: white;
+      padding: 4px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 4px;
+      margin-bottom: 4px;
+      margin-top: 5px;
+      width: 100px;
+      height: 30px;
+      justify-content: center;
+    }
 
-      </textarea>
+    button:hover {
+      background-color: #2563eb;
+    }
 
 
+
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #d1d5db;
+      width: calc(100% - 22px);
+      /* Adjusted for padding and border */
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: calc(100% - 22px);
+      /* Adjusted for padding and border */
+      height: 400px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #d1d5db;
+      resize: none;
+    }
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      flex-basis: 50%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    small {
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <img src="./logo.png" alt="Logo" style="border-radius:100px;" />
+      <h3 style="padding-left:10px;">Replicate.com Extension: Import Models</h3>
     </div>
-    <script>
+    <div class="content">
+      <p>Import any AI model found on <a target="_blank"
+          href='https://replicate.com/explore'>replicate.com</a>, an online platform for hosting and running generative AI.</p>
+      
+      <div style="border: 1px solid darkred; padding: 4px; margin-bottom: 10px; display: none">
+      <small>
+      <p> <span style="color: darkred">No API Key found </span> - To use Replicate services, an API key is required, available <a href="https://replicate.com/account/api-tokens" terget="_blank">here</a> with a <a href="https://github.com" target="_blank">Github.com account</a>.</p>
+      </small>
+      <div style="display:flex; flex-direction: row; "> 
+        <input type="text" id="api-key" placeholder="Your Replicate.com API Key" style="width: 100%; height: 35px; box-sizing: border-box; margin-top: 6px">
+        <button type="button" onclick="addButton()" style="margin-left:5px; margin-top: 6px; width:80px; height: 35px;">Test</button>
+        <button type="button" onclick="addButton()" style="margin-top: 6px; width:80px; height: 35px; background-color: gray;" disabled>Add</button>
+      </div>
+    </div>
+        
+      <div style="text-align: center; width: 100%;"><small>Choose a model collection to install</small></div>
+      <ul>
+        <li>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h4>Image Essentials</h4>
+              <small>Essential tools for image generation, computer vision and image manipulation such as upscaling, photo restoration, segmentation and more.</small>
+        
+            <button type="button" onclick="addFavButton('images')">
+              Add Models
+            </button>    </div>
+          </div>
+        </li>
+        <li>
+          <div style="gap: 5px; display: flex; align-items: center; justify-content: space-between; ">
+            <div>
+              <h4>Stable Diffusion 1.5 Collection</h4>
+              <small>Image Generation using Stable Diffusion 1.5 and Controlnet models</small>
+           
+            <button type="button" onclick="addFavButton('SD15')">
+     Add Models
+            </button> </div>
+          </div>
+        </li>
+        <li>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h4>Stable Diffusion XL Collection</h4>
+              <small>Image generation using custom models and fine-tunes based on Stability AI's latest Stable Diffusion release</small>
+          
+            <button type="button" onclick="addFavButton('SDXL')">
+       Add Models
+            </button>  </div>
+          </div>
+        </li>
+        <li>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h4>Large Language Models</h4>
+              <small>Text and Code Generation with open source LLMs such as LLama, Lama2 and MistralAI.</small>
+         
+            <button type="button" onclick="addFavButton('LLM')">
+  Add Models
+            </button>   </div>
+          </div>
+        </li>
+      </ul>
+      <div><small>Or install a single Replicate model. Use the URL (e.g. https://replicate.com/stability-ai/sdxl) or a
+          valid Model owner and name in the format: owner/modelName, for example <b>stability-ai/sdxl</b></small></div>
+    </div>
+    <div>
+      <input type="text" id="modelName" placeholder="e.g. stability-ai/sdxl" style="width: 100%; box-sizing: border-box; margin-top: 6px">
+
+    <button type="button" onclick="addButton()" style="margin-top: 4px; width:80px;">Add Model</button>
+  </div>
+    <div><small>After adding models, they can be found in the block manager.</small></div>
+    <textarea id="result" style="width: 100%; height:60px; box-sizing: border-box; margin-top:10px;"></textarea>
+
+  <script>     const runExtensionScript = async (scriptName, payload) => {
 
 
-
-      const runExtensionScript = async (scriptName, payload) => {
-
-
-        await Promise.all(payload.forEach(async (p) => {
-          const response = await fetch('/api/v1/mercenaries/runscript/omni-extension-replicate:' + scriptName,
+      await Promise.all(payload.forEach(async (p) => {
+        const response = await fetch('/api/v1/mercenaries/runscript/omni-extension-replicate:' + scriptName,
           {
             method: 'POST',
             headers: {
@@ -85,114 +200,107 @@
         let resultArea = document.getElementById("result");
         resultArea.value = `${JSON.stringify(replicateResult, null, 2)}`;
 
-        }));
+      }));
 
-        return data
+      return data
+    }
+
+
+    const addFavButton = async function (type) {
+
+      if (type === 'SDXL') {
+        runExtensionScript('replicate', `
+    cbh123/sdxl-money,
+    davidbarker/sdxl-polaroid,
+    doriandarko/sdxl-hiroshinagai,
+    fofr/sdxl-emoji,
+    fofr/sdxl-barbie,
+    fofr/sdxl-tron,
+    jakedahn/sdxl-70s-scifi,
+    lucataco/sdxl-clip-interrogator,
+    lucataco/sdxl-panoramic,
+    nandycc/sdxl-app-icons,
+    pwntus/sdxl-gta-v,
+    stability-ai/sdxl,
+    `.split(',').map(s => s.trim()).filter(Boolean))
+      }
+      else if (type === 'SD15') {
+        runExtensionScript('replicate', `
+    22-hours/vintedois-diffusion,
+    andreasjansson/illusion,
+    andreasjansson/qrcode,
+    andreasjansson/stable-diffusion-inpainting,
+    arielreplicate/paella_fast_outpainting,
+    cjwbw/analog-diffusion,
+    cjwbw/stable-diffusion-high-resolution,
+    cjwbw/vq-diffusion,
+    cjwbw/magifactory-t-shirt-diffusion,
+    logerzhu/ad-inpaint,
+    rossjillian/controlnet,
+    stability-ai/stable-diffusion,
+    tommoore515/material_stable_diffusion,
+    tstramer/archer-diffusion,
+  `.split(',').map(s => s.trim()).filter(Boolean))
+      }
+      else if (type === 'images') {
+        runExtensionScript('replicate', `
+    andreasjansson/deepfloyd-if,
+    arielreplicate/deoldify_image,
+    cjwbw/rembg,
+    hassamdevsy/mask2former,
+    huage001/adaattn,
+    jingyunliang/swinir,
+    lucataco/faceswap,
+    microsoft/bringing-old-photos-back-to-life,
+    mv-lab/swin2sr,
+    nightmareai/real-esrgan,
+    nightmareai/latent-sr,
+    rmokady/clip_prefix_caption,
+    sczhou/codeformer,
+    stphtan94117/auto-remove-anything,
+    stphtan94117/auto-blurring-of-faces-and-license_plates,
+    tencentarc/gfpgan,
+  `.split(',').map(s => s.trim()).filter(Boolean))
+      }
+      else if (type === 'LLM') {
+        runExtensionScript('replicate', `
+    lucataco/mpt-30b-chat,
+    meta/llama-2-7b-chat,
+    meta/llama-2-13b-chat,
+    meta/llama-2-70b-chat,
+    replicate/vicuna-13b,
+  `.split(',').map(s => s.trim()).filter(Boolean))
+      }
+    }
+
+    const addButton = async function () {
+      const modelName = document.getElementById("modelName").value;
+
+      let name = modelName.trim();
+
+      name = name.replace('https://replicate.com/', '')
+
+
+      if (name.length == 0) {
+        alert("Please enter a valid model name in the format: owner/modelName");
+        return;
       }
 
-
-      const addFavButton = async function(type)
-      {
-
-        if (type === 'SDXL')
-        {
-          runExtensionScript('replicate', `
-            cbh123/sdxl-money,
-            davidbarker/sdxl-polaroid,
-            doriandarko/sdxl-hiroshinagai,
-            fofr/sdxl-emoji,
-            fofr/sdxl-barbie,
-            fofr/sdxl-tron,
-            jakedahn/sdxl-70s-scifi,
-            lucataco/sdxl-clip-interrogator,
-            lucataco/sdxl-panoramic,
-            nandycc/sdxl-app-icons,
-            pwntus/sdxl-gta-v,
-            stability-ai/sdxl,
-            `.split(',').map(s => s.trim()).filter(Boolean))
-        }
-        else if (type === 'SD15')
-        {
-          runExtensionScript('replicate', `
-            22-hours/vintedois-diffusion,
-            andreasjansson/illusion,
-            andreasjansson/qrcode,
-            andreasjansson/stable-diffusion-inpainting,
-            arielreplicate/paella_fast_outpainting,
-            cjwbw/analog-diffusion,
-            cjwbw/stable-diffusion-high-resolution,
-            cjwbw/vq-diffusion,
-            cjwbw/magifactory-t-shirt-diffusion,
-            logerzhu/ad-inpaint,
-            rossjillian/controlnet,
-            stability-ai/stable-diffusion,
-            tommoore515/material_stable_diffusion,
-            tstramer/archer-diffusion,
-          `.split(',').map(s => s.trim()).filter(Boolean))
-        }
-        else if (type === 'images')
-        {
-          runExtensionScript('replicate', `
-            andreasjansson/deepfloyd-if,
-            arielreplicate/deoldify_image,
-            cjwbw/rembg,
-            hassamdevsy/mask2former,
-            huage001/adaattn,
-            jingyunliang/swinir,
-            lucataco/faceswap,
-            microsoft/bringing-old-photos-back-to-life,
-            mv-lab/swin2sr,
-            nightmareai/real-esrgan,
-            nightmareai/latent-sr,
-            rmokady/clip_prefix_caption,
-            sczhou/codeformer,
-            stphtan94117/auto-remove-anything,
-            stphtan94117/auto-blurring-of-faces-and-license_plates,
-            tencentarc/gfpgan,
-          `.split(',').map(s => s.trim()).filter(Boolean))
-        }
-        else if (type === 'LLM')
-        {
-          runExtensionScript('replicate', `
-            lucataco/mpt-30b-chat,
-            meta/llama-2-7b-chat,
-            meta/llama-2-13b-chat,
-            meta/llama-2-70b-chat,
-            replicate/vicuna-13b,
-          `.split(',').map(s => s.trim()).filter(Boolean))
-        }
+      if (name.indexOf('/') < 1) {
+        alert("Please enter a valid model name in the format: owner/modelName");
+        return;
       }
 
-      const addButton = async function()
-      {
-        const modelName = document.getElementById("modelName").value;
+      runExtensionScript('replicate', [name])
+      document.getElementById("modelName").value = ''
 
-        let name = modelName.trim();
+    }
 
-        name = name.replace('https://replicate.com/', '')
-
-
-        if (name.length == 0)
-        {
-          alert("Please enter a valid model name in the format: owner/modelName");
-          return;
-        }
-
-        if (name.indexOf('/') < 1)
-        {
-          alert("Please enter a valid model name in the format: owner/modelName");
-          return;
-        }
-
-        runExtensionScript('replicate', [name])
-        document.getElementById("modelName").value = ''
-
-      }
-
-      /*const args = new URLSearchParams(location.search)
-      const params = JSON.parse(args.get('q'))*/
+    /*const args = new URLSearchParams(location.search)
+    const params = JSON.parse(args.get('q'))*/
 
 
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>
