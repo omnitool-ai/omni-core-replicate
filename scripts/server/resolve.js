@@ -5,7 +5,7 @@ const script = {
   name: 'resolve',
 
   exec: async function (ctx, payload) {
-    
+
     if (payload.length < 1) {
       return { success: false };
     }
@@ -36,14 +36,14 @@ const script = {
 
     const nsData = ctx.app.blocks.namespaces.get('replicate');
     const adapter = new ctx.app.blocks.ReteAdapter(
-      'omni_extension_replicate:replicate',
+      'omni_core_replicate:replicate',
       raw_schema,
       nsData
     );
     let schema = raw_schema;
     const components = schema.components;
 
-    const namespaceName = 'omni-extension-replicate:run'
+    const namespaceName = 'omni-core-replicate:run'
     const componentName = replicateModel.owner + '/' + replicateModel.name /*'_' + latest_version.id*/
     const component = ctx.app.blocks.BaseComponent.create(
       namespaceName, componentName
@@ -229,13 +229,13 @@ const script = {
         .toOmniIO()
     );
 
-    component.setMacro('exec', "omni-extension-replicate:replicate_exec")
+    component.setMacro('exec', "omni-core-replicate:replicate_exec")
 
     // add the block to the block manager
     ctx.app.blocks.addBlock(component.toJSON());
     // create a new block instance
     const newBlock = await ctx.app.blocks.getInstance(`${namespaceName}.${componentName}`, ctx.userId)
-    
+
     return {
       replicateResult: result,
       block: newBlock,

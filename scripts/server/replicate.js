@@ -6,7 +6,7 @@ const script = {
 
   exec: async function (ctx, payload) {
     const sessionId = ctx.sessionId;
-    
+
     if (payload.length < 1) {
       await ctx.app.sendErrorToSession(
         sessionId,
@@ -45,15 +45,16 @@ const script = {
 
     const nsData = ctx.app.blocks.namespaces.get('replicate');
     const adapter = new ctx.app.blocks.ReteAdapter(
-      'omni_extension_replicate:replicate',
+      'omni_core_replicate:replicate',
       raw_schema,
       nsData
     );
     let schema = raw_schema;
     const components = schema.components;
-
+    const namespaceName = 'omni-core-replicate:run'
+    const componentName = replicateModel.owner + '/' + replicateModel.name /*'_' + latest_version.id*/
     const component = ctx.app.blocks.BaseComponent.create(
-      'omni-extension-replicate:run', replicateModel.owner + '/' + replicateModel.name, '_' + latest_version.id
+      namespaceName, componentName
     )
       .fromScratch()
       .set('description', replicateModel.description)
@@ -236,7 +237,7 @@ const script = {
         .toOmniIO()
     );
 
-    component.setMacro('exec', "omni-extension-replicate:replicate_exec")
+    component.setMacro('exec', "omni-core-replicate:replicate_exec")
 
     const b = component.toJSON()
     ctx.app.blocks.addBlock(component.toJSON());

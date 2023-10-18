@@ -109,26 +109,26 @@
     <div class="content">
       <p>Import any AI model found on <a target="_blank"
           href='https://replicate.com/explore'>replicate.com</a>, an online platform for hosting and running generative AI.</p>
-      
+
       <div style="border: 1px solid darkred; padding: 4px; margin-bottom: 10px; display: none">
       <small>
       <p> <span style="color: darkred">No API Key found </span> - To use Replicate services, an API key is required, available <a href="https://replicate.com/account/api-tokens" terget="_blank">here</a> with a <a href="https://github.com" target="_blank">Github.com account</a>.</p>
       </small>
-      <div style="display:flex; flex-direction: row; "> 
+      <div style="display:flex; flex-direction: row; ">
         <input type="text" id="api-key" placeholder="Your Replicate.com API Key" style="width: 100%; height: 35px; box-sizing: border-box; margin-top: 6px">
         <button type="button" onclick="addButton()" style="margin-left:5px; margin-top: 6px; width:80px; height: 35px;">Test</button>
         <button type="button" onclick="addButton()" style="margin-top: 6px; width:80px; height: 35px; background-color: gray;" disabled>Add</button>
       </div>
     </div>
-        
+
       <div style="text-align: center; width: 100%;"><small>Choose a model collection to install</small></div>
-      <ul> 
+      <ul>
         <li>
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
               <h4>Image Essentials</h4>
               <small>Essential tools for image generation, computer vision and image manipulation such as upscaling, photo restoration, segmentation and more.</small>
-        
+
             <button type="button" onclick="addFavButton('images')">
               Add Models
             </button>    </div>
@@ -139,7 +139,7 @@
             <div>
               <h4>Stable Diffusion 1.5 Collection</h4>
               <small>Image Generation using Stable Diffusion 1.5 and Controlnet models</small>
-           
+
             <button type="button" onclick="addFavButton('SD15')">
      Add Models
             </button> </div>
@@ -150,7 +150,7 @@
             <div>
               <h4>Stable Diffusion XL Collection</h4>
               <small>Image generation using custom models and fine-tunes based on Stability AI's latest Stable Diffusion release</small>
-          
+
             <button type="button" onclick="addFavButton('SDXL')">
        Add Models
             </button>  </div>
@@ -161,7 +161,7 @@
             <div>
               <h4>Large Language Models</h4>
               <small>Text and Code Generation with open source LLMs such as LLama, Lama2 and MistralAI.</small>
-         
+
             <button type="button" onclick="addFavButton('LLM')">
   Add Models
             </button>   </div>
@@ -183,7 +183,7 @@
 
 
       await Promise.all(payload.forEach(async (p) => {
-        const response = await fetch('/api/v1/mercenaries/runscript/omni-extension-replicate:' + scriptName,
+        const response = await fetch('/api/v1/mercenaries/runscript/omni-core-replicate:' + scriptName,
           {
             method: 'POST',
             headers: {
