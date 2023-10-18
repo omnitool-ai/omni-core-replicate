@@ -48,7 +48,7 @@ const extensionMethods = {
 
 let macros = {
 
-"omni-extension-replicate:replicate_exec": async (payload, ctx, component) => {
+"omni-core-replicate:replicate_exec": async (payload, ctx, component) => {
   if (payload.enabled === false)
   {
     return {}
