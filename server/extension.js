@@ -2,7 +2,7 @@
 
 const debug = (text)=>
 {
-  console.log('=================>', text)
+  //console.log(text)
 }
 
 const extensionHooks = {
@@ -30,6 +30,21 @@ const extensionHooks = {
   }
 
 }
+
+import resolveScript from '../scripts/server/resolve.js'
+
+
+const extensionMethods = {
+  'resolveMissingBlock': async (ctx, blockKey) => {
+      //strip 'run.' prefix from blockKey
+      blockKey = blockKey.replace('run.', '')
+      const result = await resolveScript.exec(ctx, [blockKey])
+      return result?.block || undefined
+  }
+ }
+
+
+
 
 let macros = {
 
@@ -66,14 +81,17 @@ let macros = {
 
 }
 
+
 const createComponents =  () => ({
   blocks: [],
   patches: [],
-  macros: macros
+  macros: macros,
+
 })
 
 export default
 {
   extensionHooks,
+  extensionMethods,
   createComponents
 }

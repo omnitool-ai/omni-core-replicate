@@ -2,25 +2,16 @@
 
 
 const script = {
-  name: 'replicate',
+  name: 'resolve',
 
   exec: async function (ctx, payload) {
-    const sessionId = ctx.sessionId;
     
     if (payload.length < 1) {
-      await ctx.app.sendErrorToSession(
-        sessionId,
-        `Usage:  \n\` /replicate owner/model\`,  \nfor example:  \n\` /replicate replicate/vicuna-13b\`.`
-      );
       return { success: false };
     }
     const [model_owner, model_name] = payload[0].split('/');
 
     if (!model_name || !model_owner) {
-      await ctx.app.sendErrorToSession(
-        sessionId,
-        `Usage:  \n\` /replicate owner/model\`,  \nfor example:  \n\` /replicate replicate/vicuna-13b\`.`
-      );
       return { success: false };
     }
 
@@ -52,8 +43,10 @@ const script = {
     let schema = raw_schema;
     const components = schema.components;
 
+    const namespaceName = 'omni-extension-replicate:run'
+    const componentName = replicateModel.owner + '/' + replicateModel.name /*'_' + latest_version.id*/
     const component = ctx.app.blocks.BaseComponent.create(
-      'omni-extension-replicate:run', replicateModel.owner + '/' + replicateModel.name, '_' + latest_version.id
+      namespaceName, componentName
     )
       .fromScratch()
       .set('description', replicateModel.description)
@@ -238,29 +231,15 @@ const script = {
 
     component.setMacro('exec', "omni-extension-replicate:replicate_exec")
 
-    const b = component.toJSON()
+    // add the block to the block manager
     ctx.app.blocks.addBlock(component.toJSON());
-
-    //console.warn(JSON.stringify(replicateModel, null, 2));
-
-    await ctx.app.sendMessageToSession(
-      ctx.sessionId,
-      'Created a block for this model.'
-      + (b.description ? `\n<br>Description: ${b.description}` : ''),
-      'text/markdown',
-      {
-        commands: [
-          {
-            id: 'add',
-            args: [b.displayNamespace + '.' + b.displayOperationId],
-            title: `Add ${b.title}`,
-          },
-        ],
-      }
-    );
+    // create a new block instance
+    const newBlock = await ctx.app.blocks.getInstance(`${namespaceName}.${componentName}`, ctx.userId)
+    
     return {
       replicateResult: result,
-      block: b
+      block: newBlock,
+      json: component.toJSON(),
     }
   },
 };
