@@ -1,7 +1,7 @@
 title: Replicate Extension
 version: 0.0.1
 description: Full support for running any model of replicate.com directly in omnitool. Requires a [Replicate.com API token](https://replicate.com/account/api-tokens).
-author: Georg Zoeller
+author: Omnitool.ai team
 origin: https://github.com/omnitool-ai/omni-core-replicate.git
 client:
   addToWorkbench: true
