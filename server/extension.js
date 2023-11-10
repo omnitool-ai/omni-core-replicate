@@ -70,7 +70,7 @@ let macros = {
       `${component.name}`,
       payload,
       { responseContentType: component.data.responseContentType },
-      { user: ctx.userId, sessionId: ctx.sessionId }
+      { user: ctx.userId, sessionId: ctx.sessionId, jobId: ctx.jobId }
     );
   }
 };
