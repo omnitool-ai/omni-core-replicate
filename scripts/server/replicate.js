@@ -224,10 +224,10 @@ const script = {
       console.warn("Unknown output type", output)
 
     }
-    else
-    {
-      console.warn(output.type)
-    }
+    // else
+    // {
+    //   console.warn(output.type)
+    // }
 
     component.addOutput(
       component

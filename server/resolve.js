@@ -7,6 +7,41 @@ const script = {
   name: 'resolve',
 
   exec: async function (ctx, payload) {
+    try {
+      return await this._exec(ctx, payload);
+    } catch (e) {
+      if (FallbackModels[payload[0]] === undefined) {
+        throw e;
+      } else {
+        omnilog.warn(`resolveMissingBlock failed. Attempt recovery with static fallback for ${payload[0]}`);
+        return await this._fallback(ctx, payload, FallbackModels);
+      }
+    }
+  },
+  _fallback: async function (ctx, payload, fallbackModels) {
+    if (payload.length < 1) {
+      return { success: false };
+    }
+    const [model_owner, model_name] = payload[0].split('/');
+
+    if (!model_name || !model_owner) {
+      return { success: false };
+    }
+    const fallbackBlock = fallbackModels[payload[0]];
+    // create a new block instance
+    const namespaceName = 'omni-core-replicate:run';
+    const componentName = model_owner + '/' + model_name;
+    // add the block to the block manager
+    ctx.app.blocks.blocks.set(`${fallbackBlock.apiNamespace}.${fallbackBlock.apiOperationId}`, fallbackBlock);
+    const newBlock = await ctx.app.blocks.getInstance(`${namespaceName}.${componentName}`, ctx.userId);
+    omnilog.status_success(`[Replicate] Resolved ${componentName} with static fallback`);
+    return {
+      replicateResult: {},
+      block: newBlock,
+      json: JSON.stringify(fallbackBlock)
+    };
+  },
+  _exec: async function (ctx, payload) {
     if (payload.length < 1) {
       return { success: false };
     }
@@ -187,9 +222,10 @@ const script = {
     if (!output.type) {
       output.type = 'object';
       console.warn('Unknown output type', output);
-    } else {
-      console.warn(output.type);
-    }
+    } 
+    // else {
+    //   console.warn(output.type);
+    // }
 
     component.addOutput(
       component
