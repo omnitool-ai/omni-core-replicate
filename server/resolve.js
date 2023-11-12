@@ -3,14 +3,10 @@
  * All rights reserved.
  */
 
-
-
-
 const script = {
   name: 'resolve',
 
   exec: async function (ctx, payload) {
-
     if (payload.length < 1) {
       return { success: false };
     }
@@ -22,43 +18,35 @@ const script = {
 
     const result = await ctx.app.blocks.runBlock(ctx, 'replicate.models_get', {
       model_owner,
-      model_name,
+      model_name
     });
     const replicateModel = result._omni_result;
 
     let source = {
-      links: {},
+      links: {}
     };
 
-    if (replicateModel.github_url)
-      source.links.Code = replicateModel.github_url;
+    if (replicateModel.github_url) source.links.Code = replicateModel.github_url;
     if (replicateModel.paper_url) source.links.Paper = replicateModel.paper_url;
-    if (replicateModel.license_url)
-      source.links.License = replicateModel.license_url;
+    if (replicateModel.license_url) source.links.License = replicateModel.license_url;
 
     const latest_version = replicateModel.latest_version;
     const raw_schema = latest_version.openapi_schema;
 
     const nsData = ctx.app.blocks.namespaces.get('replicate');
-    const adapter = new ctx.app.blocks.ReteAdapter(
-      'omni_core_replicate:replicate',
-      raw_schema,
-      nsData
-    );
+    const adapter = new ctx.app.blocks.ReteAdapter('omni_core_replicate:replicate', raw_schema, nsData);
     let schema = raw_schema;
     const components = schema.components;
 
-    const namespaceName = 'omni-core-replicate:run'
-    const componentName = replicateModel.owner + '/' + replicateModel.name /*'_' + latest_version.id*/
-    const component = ctx.app.blocks.BaseComponent.create(
-      namespaceName, componentName
-    )
+    const namespaceName = 'omni-core-replicate:run';
+    const componentName = replicateModel.owner + '/' + replicateModel.name; /*'_' + latest_version.id*/
+    const component = ctx.app.blocks.BaseComponent.create(namespaceName, componentName)
       .fromScratch()
       .set('description', replicateModel.description)
       .set('title', `Replicate: ${replicateModel.owner}/${replicateModel.name}`)
       //.set('category', 'Security')
       .setMeta({
-        source,
+        source
       })
       .setMethod('X-CUSTOM');
 
@@ -67,34 +55,29 @@ const script = {
     component.setCustom('replicate', {
       owner: replicateModel.owner,
       model: replicateModel.name,
-      version: latest_version.id,
+      version: latest_version.id
     });
 
     for (let key in inputs.properties) {
       let rawSchema = inputs.properties[key];
 
       // Recursively resolve any $ref in the schema
-      let input = Object.assign(
-        {},
-        rawSchema,
-        adapter.resolveSchema(inputs.properties[key])
-      );
+      let input = Object.assign({}, rawSchema, adapter.resolveSchema(inputs.properties[key]));
 
       // Suboptimal handling of allOf by taking the first element. This can be improved later
       if (input.allOf && input.allOf.length > 0) {
         input.type = input.allOf[0].type;
         if (input.allOf[0].enum) {
-          input.type ??= typeof(input.allOf[0].enum[0])
+          input.type ??= typeof input.allOf[0].enum[0];
           input.choices = input.allOf[0].enum.map((e) => {
             return { value: e.toString(), title: e.toString() };
           });
         }
         input.title = input.allOf[0].title;
-      }
-      else if (input.anyOf && input.anyOf.length > 0) {
+      } else if (input.anyOf && input.anyOf.length > 0) {
         input.type = input.anyOf[0].type;
         if (input.anyOf[0].enum) {
-          input.type ??= typeof(input.anyOf[0].enum[0])
+          input.type ??= typeof input.anyOf[0].enum[0];
           input.choices = input.anyOf[0].enum.map((e) => {
             return { value: e.toString(), title: e.toString() };
           });
@@ -112,11 +95,7 @@ const script = {
 
       // If we have a choices option, which results in a select control, we should provide steps
 
-
-
-
-      if (input.type ==='string')
-      {
+      if (input.type === 'string') {
         input.customSocket = 'text';
       }
 
@@ -127,7 +106,7 @@ const script = {
           key === 'image' ||
           input.title === 'Image' ||
           key === 'mask' ||
-          input.title === "Mask"
+          input.title === 'Mask'
         ) {
           customSocket = 'image';
         } else {
@@ -137,8 +116,8 @@ const script = {
       }
 
       if (input.minimum != null || input.maximum != null) {
-      if (input.type === 'number' || input.type === 'float') {
-        input.step = 0.01;
+        if (input.type === 'number' || input.type === 'float') {
+          input.step = 0.01;
         } else if (input.type === 'integer') {
           input.step = 1;
         }
@@ -147,31 +126,29 @@ const script = {
       let defaultV = (replicateModel.default_example?.input?.[key] || input.default) ?? input.default;
 
       const ip = component
-      .createInput(key, input.type, customSocket, customSocketOptions)
-      .set('description', input.description)
-      .setDefault(defaultV)
-      .setConstraints(input.minimum,input.maximum, input.step)
-      .set('title', input.title)
-      .setRequired(inputs.required?.includes?.(key))
+        .createInput(key, input.type, customSocket, customSocketOptions)
+        .set('description', input.description)
+        .setDefault(defaultV)
+        .setConstraints(input.minimum, input.maximum, input.step)
+        .set('title', input.title)
+        .setRequired(inputs.required?.includes?.(key));
 
       if (input.choices?.length) {
-        ip.setChoices(input.choices, defaultV)
+        ip.setChoices(input.choices, defaultV);
       }
 
-      component.addInput( ip.toOmniIO()
-
-      );
+      component.addInput(ip.toOmniIO());
 
       const enabledInput = component
-      .createInput("enabled", "boolean")
-      .set('title', "Enabled")
-      .set('description', "Programmatically toggle this component")
-      .setDefault(true)
-      component.addInput( enabledInput.toOmniIO())
+        .createInput('enabled', 'boolean')
+        .set('title', 'Enabled')
+        .set('description', 'Programmatically toggle this component')
+        .setDefault(true);
+      component.addInput(enabledInput.toOmniIO());
     }
 
     let customSocketOptions = {
-      customSettings: {},
+      customSettings: {}
     };
 
     if (output.type == 'array') {
@@ -182,13 +159,10 @@ const script = {
       if (output.items.type === 'string') {
         output.type = 'string';
         output.customSocket = 'text';
-      } else  if (output.items.anyOf)
-      {
+      } else if (output.items.anyOf) {
         output.type = output.items.anyOf[0].type;
-      }
-      else
-      {
-        output.type = output.items?.type
+      } else {
+        output.type = output.items?.type;
       }
 
       if (output['x-cog-array-display'] === 'concatenate') {
@@ -210,42 +184,33 @@ const script = {
       }
     }
 
-    if (!output.type)
-    {
-      output.type = 'object'
-      console.warn("Unknown output type", output)
-
-    }
-    else
-    {
-      console.warn(output.type)
+    if (!output.type) {
+      output.type = 'object';
+      console.warn('Unknown output type', output);
+    } else {
+      console.warn(output.type);
     }
 
     component.addOutput(
       component
-        .createOutput(
-          'output',
-          output.type,
-          output.customSocket,
-          customSocketOptions
-        )
+        .createOutput('output', output.type, output.customSocket, customSocketOptions)
         .set('description', output.description)
         .set('title', output.title)
         .toOmniIO()
     );
 
-    component.setMacro('exec', "omni-core-replicate:replicate_exec")
+    component.setMacro('exec', 'omni-core-replicate:replicate_exec');
 
     // add the block to the block manager
     ctx.app.blocks.addBlock(component.toJSON());
     // create a new block instance
-    const newBlock = await ctx.app.blocks.getInstance(`${namespaceName}.${componentName}`, ctx.userId)
+    const newBlock = await ctx.app.blocks.getInstance(`${namespaceName}.${componentName}`, ctx.userId);
 
     return {
       replicateResult: result,
       block: newBlock,
-      json: component.toJSON(),
-    }
-  },
+      json: component.toJSON()
+    };
+  }
 };
 export default script;
